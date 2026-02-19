@@ -28,7 +28,6 @@ def driver(request):
         options.add_argument("--start-maximized")
         options.add_argument("--no-sandbox")
         
-        # Selenium сам скачает chromedriver
         driver = webdriver.Chrome(options=options)
         
     elif browser == "firefox":

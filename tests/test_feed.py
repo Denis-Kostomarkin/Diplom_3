@@ -61,7 +61,6 @@ class TestFeed:
 
     @allure.title("3. Номер заказа появляется в разделе «В работе»")
     def test_order_appears_in_progress(self, driver, main_page, feed_page, login_page):
-        """Появление номера заказа в 'В работе'"""
         self._authorize(driver, main_page, login_page)
         
         main_page.add_ingredient_to_order()

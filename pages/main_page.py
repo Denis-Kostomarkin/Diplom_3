@@ -1,8 +1,9 @@
 """Page Object для главной страницы"""
 
 import allure
-import time
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from pages.base_page import BasePage
 from utils.locators import MainPageLocators as Locators
@@ -30,7 +31,7 @@ class MainPage(BasePage):
 
     @allure.step("Закрыть модальное окно ингредиента")
     def close_ingredient_modal(self):
-        time.sleep(0.5)
+        self.wait_for_visibility(Locators.INGREDIENT_DETAILS_CLOSE)
         self.click(Locators.INGREDIENT_DETAILS_CLOSE)
 
     @allure.step("Добавить ингредиент в заказ")
@@ -54,8 +55,7 @@ class MainPage(BasePage):
 
     @allure.step("Проверить отображение модального окна ингредиента")
     def is_ingredient_modal_displayed(self):
-        time.sleep(0.5)
-        return self.is_visible(Locators.INGREDIENT_DETAILS_MODAL)
+        return self.wait_for_visibility(Locators.INGREDIENT_DETAILS_MODAL).is_displayed()
 
     @allure.step("Проверить отображение заголовка конструктора")
     def is_constructor_header_displayed(self):
@@ -67,14 +67,19 @@ class MainPage(BasePage):
 
     @allure.step("Получить номер заказа")
     def get_order_number(self):
-        time.sleep(15)
-        return self.get_text(Locators.ORDER_NUMBER)
+        wait = WebDriverWait(self.driver, 15)
+        order_element = wait.until(
+            lambda d: self.find_element(Locators.ORDER_NUMBER) 
+            if self.find_element(Locators.ORDER_NUMBER).text != "9999" 
+            else False
+        )
+        return order_element.text
 
     @allure.step("Закрыть модальное окно заказа")
     def close_order_modal(self):
-        time.sleep(1)
+        self.wait_for_visibility(Locators.ORDER_MODAL_CLOSE)
         self.click(Locators.ORDER_MODAL_CLOSE)
-        time.sleep(0.5)
+        self.wait_for_invisibility(Locators.ORDER_MODAL)
 
     @allure.step("Оформить заказ")
     def create_order(self):
@@ -82,3 +87,7 @@ class MainPage(BasePage):
         order_number = self.get_order_number()
         self.close_order_modal()
         return order_number
+
+    @allure.step("Кликнуть на кнопку 'Личный Кабинет'")
+    def click_personal_cabinet(self):
+        self.click(Locators.PERSONAL_CABINET_BUTTON)

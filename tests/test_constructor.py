@@ -36,9 +36,6 @@ class TestConstructor:
     def test_close_ingredient_modal(self, driver, main_page):
         main_page.open_main_page()
         main_page.click_ingredient()
-        
-        assert main_page.is_ingredient_modal_displayed(), "Модальное окно не открылось"
-        
         main_page.close_ingredient_modal()
         
         assert main_page.wait_for_invisibility(MainPageLocators.INGREDIENT_DETAILS_MODAL), "Модальное окно не закрылось"

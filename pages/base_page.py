@@ -52,3 +52,28 @@ class BasePage:
         """Прокрутить страницу к элементу"""
         element = self.find_element(locator)
         self.driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element)
+
+    @allure.step("Подождать появления элемента {locator}")
+    def wait_for_visibility(self, locator, timeout=10):
+        """Явное ожидание видимости элемента"""
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(EC.visibility_of_element_located(locator))
+
+    @allure.step("Подождать изменения URL")
+    def wait_for_url_change(self, timeout=10):
+        """Ожидание изменения URL"""
+        current_url = self.driver.current_url
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(lambda d: d.current_url != current_url)
+
+    @allure.step("Подождать, пока URL не содержит {text}")
+    def wait_for_url_not_contains(self, text, timeout=10):
+        """Ожидание, пока URL не содержит указанный текст"""
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(lambda d: text not in d.current_url)
+
+    @allure.step("Подождать появления текста в элементе {locator}")
+    def wait_for_text_in_element(self, locator, text, timeout=10):
+        """Ожидание появления текста в элементе"""
+        wait = WebDriverWait(self.driver, timeout)
+        return wait.until(EC.text_to_be_present_in_element(locator, text))

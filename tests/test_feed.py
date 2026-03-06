@@ -10,17 +10,9 @@ from utils.locators import MainPageLocators
 @allure.feature("Лента заказов")
 class TestFeed:
 
-    def _authorize(self, driver, main_page, login_page):
-        """Вспомогательный метод для авторизации"""
-        main_page.open_main_page()
-        main_page.click(MainPageLocators.PERSONAL_CABINET_BUTTON)
-        login_page.login(TEST_USER["email"], TEST_USER["password"])
-        
-        main_page.wait_for_url_not_contains("login")
-
     @allure.title("1. Счётчик «Выполнено за всё время» увеличивается")
     def test_total_orders_counter_increase(self, driver, main_page, feed_page, login_page):
-        self._authorize(driver, main_page, login_page)
+        login_page.authorize_from_main_page(main_page, TEST_USER["email"], TEST_USER["password"])
         
         main_page.click_feed()
         initial_count = feed_page.get_total_orders_count()
@@ -37,7 +29,7 @@ class TestFeed:
 
     @allure.title("2. Счётчик «Выполнено за сегодня» увеличивается")
     def test_today_orders_counter_increase(self, driver, main_page, feed_page, login_page):
-        self._authorize(driver, main_page, login_page)
+        login_page.authorize_from_main_page(main_page, TEST_USER["email"], TEST_USER["password"])
         
         main_page.click_feed()
         initial_count = feed_page.get_today_orders_count()
@@ -54,7 +46,7 @@ class TestFeed:
 
     @allure.title("3. Номер заказа появляется в разделе «В работе»")
     def test_order_appears_in_progress(self, driver, main_page, feed_page, login_page):
-        self._authorize(driver, main_page, login_page)
+        login_page.authorize_from_main_page(main_page, TEST_USER["email"], TEST_USER["password"])
         
         main_page.add_ingredient_to_order()
         order_number = main_page.create_order()

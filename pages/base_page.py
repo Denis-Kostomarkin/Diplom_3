@@ -21,6 +21,11 @@ class BasePage:
     def find_element(self, locator):
         return self.wait.until(EC.presence_of_element_located(locator))
 
+    @allure.step("Найти элементы {locator}")
+    def find_elements(self, locator):
+        """Найти все элементы по локатору"""
+        return self.driver.find_elements(*locator)
+
     @allure.step("Кликнуть по элементу {locator}")
     def click(self, locator):
         element = self.wait.until(EC.element_to_be_clickable(locator))
@@ -71,9 +76,3 @@ class BasePage:
         """Ожидание, пока URL не содержит указанный текст"""
         wait = WebDriverWait(self.driver, timeout)
         return wait.until(lambda d: text not in d.current_url)
-
-    @allure.step("Подождать появления текста в элементе {locator}")
-    def wait_for_text_in_element(self, locator, text, timeout=10):
-        """Ожидание появления текста в элементе"""
-        wait = WebDriverWait(self.driver, timeout)
-        return wait.until(EC.text_to_be_present_in_element(locator, text))

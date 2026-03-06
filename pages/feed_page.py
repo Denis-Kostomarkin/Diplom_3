@@ -23,8 +23,9 @@ class FeedPage(BasePage):
 
     @allure.step("Получить заказы 'В работе'")
     def get_in_progress_orders(self):
+        """Получить список заказов в работе"""
         try:
-            orders = self.driver.find_elements(*Locators.IN_PROGRESS_ORDERS)
+            orders = self.find_elements(Locators.IN_PROGRESS_ORDERS)
             return [order.text for order in orders if order.text.strip()]
         except:
             return []

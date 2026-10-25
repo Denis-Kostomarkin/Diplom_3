@@ -2,6 +2,7 @@
 
 import allure
 from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -44,8 +45,8 @@ class BasePage:
     @allure.step("Проверить видимость элемента {locator}")
     def is_visible(self, locator):
         try:
-            return self.find_element(locator).is_displayed()
-        except:
+            return self.wait.until(EC.visibility_of_element_located(locator)).is_displayed()
+        except TimeoutException:
             return False
 
     @allure.step("Подождать исчезновения элемента {locator}")

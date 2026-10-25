@@ -30,7 +30,7 @@ class FeedPage(BasePage):
     def get_today_orders_count(self):
         text = self.get_text(Locators.TODAY_ORDERS_COUNTER)
         numbers = re.findall(r'\d+', text.replace(' ', ''))
-        return int(numbers[0]) if numbers else 0
+        return int(numbers[0]) if numbers else self._missing_counter(text)
 
     @allure.step("Получить заказы 'В работе'")
     def get_in_progress_orders(self):

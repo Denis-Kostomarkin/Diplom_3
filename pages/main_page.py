@@ -2,6 +2,7 @@
 
 import allure
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -48,10 +49,8 @@ class MainPage(BasePage):
 
     @allure.step("Получить значение счетчика ингредиента")
     def get_ingredient_counter(self):
-        try:
-            return int(self.get_text(Locators.CONSTRUCTOR_INGREDIENT_COUNTER))
-        except:
-            return 0
+        text = self.get_text(Locators.CONSTRUCTOR_INGREDIENT_COUNTER).strip()
+        return int(text)
 
     @allure.step("Проверить отображение модального окна ингредиента")
     def is_ingredient_modal_displayed(self):
@@ -68,12 +67,11 @@ class MainPage(BasePage):
     @allure.step("Получить номер заказа")
     def get_order_number(self):
         wait = WebDriverWait(self.driver, 15)
-        order_element = wait.until(
-            lambda d: self.find_element(Locators.ORDER_NUMBER) 
-            if self.find_element(Locators.ORDER_NUMBER).text != "9999" 
-            else False
-        )
-        return order_element.text
+        def valid_order_number(driver):
+            text = driver.find_element(*Locators.ORDER_NUMBER).text.strip()
+            return text if text.isdigit() and text != "9999" else False
+
+        return wait.until(valid_order_number, message="Номер заказа не появился")
 
     @allure.step("Закрыть модальное окно заказа")
     def close_order_modal(self):

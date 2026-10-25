@@ -4,6 +4,7 @@ import pytest
 import allure
 
 from utils.data import TEST_USER
+from selenium.webdriver.support.ui import WebDriverWait
 from utils.locators import MainPageLocators
 
 
@@ -23,6 +24,7 @@ class TestFeed:
         
         main_page.click_feed()
         feed_page.wait_for_visibility(MainPageLocators.FEED_HEADER)
+        feed_page.wait_for_counter_increase(feed_page.get_total_orders_count, initial_count)
         new_count = feed_page.get_total_orders_count()
         
         assert new_count > initial_count, f"Счетчик не увеличился: {initial_count} -> {new_count}"
@@ -40,6 +42,7 @@ class TestFeed:
         
         main_page.click_feed()
         feed_page.wait_for_visibility(MainPageLocators.FEED_HEADER)
+        feed_page.wait_for_counter_increase(feed_page.get_today_orders_count, initial_count)
         new_count = feed_page.get_today_orders_count()
         
         assert new_count > initial_count, f"Счетчик не увеличился: {initial_count} -> {new_count}"
@@ -54,8 +57,7 @@ class TestFeed:
         main_page.click_feed()
         feed_page.wait_for_visibility(MainPageLocators.FEED_HEADER)
         
-        in_progress = feed_page.get_in_progress_orders()
-        order_in_progress = any(str(int(order_number)) in order for order in in_progress)
-        
-        assert order_in_progress or feed_page.get_total_orders_count() > 0, \
-            f"Заказ {order_number} не найден в 'В работе'"
+        WebDriverWait(driver, 20).until(
+            lambda _: feed_page.is_order_in_progress(order_number),
+            message=f"Заказ {order_number} не найден в 'В работе'",
+        )
